@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.AdminMapper">
+
+    <!-- 结果映射，可以帮助处理列名和属性名不一致的情况，如果开启了驼峰命名转换，简单映射可以省略 -->
+    <resultMap id="AdminResultMap" type="com.example.springboot.entity.Admin">
+        <id property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="phoneNum" column="phone_num"/>
+        <result property="email" column="email"/>
+        <result property="avatar" column="avatar"/>
+    </resultMap>
+
+    <select id="findByUsernameAndPassword" resultMap="AdminResultMap">
+        SELECT * FROM admin
+        WHERE username = #{username} AND password = #{password}
+    </select>
+
+    <select id="findByUsername" resultMap="AdminResultMap">
+        SELECT * FROM admin
+        WHERE username = #{username}
+    </select>
+
+    <insert id="insert" parameterType="com.example.springboot.entity.Admin">
+        INSERT INTO admin (username, password, name, gender, age, phone_num, email, avatar)
+        VALUES (#{username}, #{password}, #{name}, #{gender}, #{age}, #{phoneNum}, #{email}, #{avatar})
+    </insert>
+
+    <update id="updateByUsername" parameterType="com.example.springboot.entity.Admin">
+        UPDATE admin
+        <set>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="phoneNum != null and phoneNum != ''">phone_num = #{phoneNum},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+        </set>
+        WHERE username = #{username}
+    </update>
+
+</mapper> 

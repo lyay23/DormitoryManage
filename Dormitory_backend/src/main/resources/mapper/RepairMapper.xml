@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.RepairMapper">
+
+    <resultMap id="RepairResultMap" type="com.example.springboot.entity.Repair">
+        <id property="id" column="id"/>
+        <result property="repairer" column="repairer"/>
+        <result property="dormBuildId" column="dormbuild_id"/>
+        <result property="dormRoomId" column="dormroom_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="state" column="state"/>
+        <result property="orderBuildTime" column="order_buildtime"/>
+        <result property="orderFinishTime" column="order_finishtime"/>
+    </resultMap>
+
+    <select id="findById" resultMap="RepairResultMap">
+        SELECT * FROM repair WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="RepairResultMap">
+        SELECT * FROM repair ORDER BY order_buildtime DESC
+    </select>
+
+    <select id="findByCriteria" resultMap="RepairResultMap">
+        SELECT * FROM repair
+        <where>
+            <if test="search != null and search != ''">
+                (title LIKE CONCAT('%', #{search}, '%') OR content LIKE CONCAT('%', #{search}, '%'))
+            </if>
+        </where>
+        ORDER BY order_buildtime DESC
+    </select>
+
+    <select id="findByRepairerAndCriteria" resultMap="RepairResultMap">
+        SELECT * FROM repair
+        <where>
+            repairer = #{repairerName}
+            <if test="search != null and search != ''">
+                AND (title LIKE CONCAT('%', #{search}, '%') OR content LIKE CONCAT('%', #{search}, '%'))
+            </if>
+        </where>
+        ORDER BY order_buildtime DESC
+    </select>
+
+    <insert id="insert" parameterType="com.example.springboot.entity.Repair" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO repair (repairer, dormbuild_id, dormroom_id, title, content, state, order_buildtime, order_finishtime)
+        VALUES (#{repairer}, #{dormBuildId}, #{dormRoomId}, #{title}, #{content}, #{state}, #{orderBuildTime}, #{orderFinishTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.springboot.entity.Repair">
+        UPDATE repair
+        <set>
+            <if test="repairer != null">repairer = #{repairer},</if>
+            <if test="dormBuildId != 0">dormbuild_id = #{dormBuildId},</if> <!-- Assuming 0 is not a valid ID -->
+            <if test="dormRoomId != 0">dormroom_id = #{dormRoomId},</if> <!-- Assuming 0 is not a valid ID -->
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="orderBuildTime != null">order_buildtime = #{orderBuildTime},</if>
+            <if test="orderFinishTime != null">order_finishtime = #{orderFinishTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM repair WHERE id = #{id}
+    </delete>
+
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM repair
+    </select>
+
+</mapper> 

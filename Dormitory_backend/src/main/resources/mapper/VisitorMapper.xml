@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.VisitorMapper">
+
+    <resultMap id="VisitorResultMap" type="com.example.springboot.entity.Visitor">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="phoneNum" column="phone_num"/>
+        <result property="originCity" column="origin_city"/>
+        <result property="visitTime" column="visit_time"/>
+        <result property="content" column="content"/>
+    </resultMap>
+
+    <select id="findById" resultMap="VisitorResultMap">
+        SELECT * FROM visitor WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="VisitorResultMap">
+        SELECT * FROM visitor ORDER BY visit_time DESC
+    </select>
+
+    <select id="findByName" resultMap="VisitorResultMap">
+        SELECT * FROM visitor
+        <where>
+            <if test="name != null and name != ''">
+                name LIKE CONCAT('%', #{name}, '%')
+            </if>
+        </where>
+        ORDER BY visit_time DESC
+    </select>
+
+    <insert id="insert" parameterType="com.example.springboot.entity.Visitor" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO visitor (name, gender, phone_num, origin_city, visit_time, content)
+        VALUES (#{name}, #{gender}, #{phoneNum}, #{originCity}, #{visitTime}, #{content})
+    </insert>
+
+    <update id="update" parameterType="com.example.springboot.entity.Visitor">
+        UPDATE visitor
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="phoneNum != null and phoneNum != ''">phone_num = #{phoneNum},</if>
+            <if test="originCity != null and originCity != ''">origin_city = #{originCity},</if>
+            <if test="visitTime != null">visit_time = #{visitTime},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM visitor WHERE id = #{id}
+    </delete>
+
+</mapper> 

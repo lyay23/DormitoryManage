@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.NoticeMapper">
+
+    <resultMap id="NoticeResultMap" type="com.example.springboot.entity.Notice">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="author" column="author"/>
+        <result property="releaseTime" column="release_time"/>
+    </resultMap>
+
+    <select id="findById" resultMap="NoticeResultMap">
+        SELECT * FROM notice WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="NoticeResultMap">
+        SELECT * FROM notice ORDER BY release_time DESC
+    </select>
+
+    <select id="findByTitle" resultMap="NoticeResultMap">
+        SELECT * FROM notice
+        <where>
+            <if test="title != null and title != ''">
+                title LIKE CONCAT('%', #{title}, '%')
+            </if>
+        </where>
+        ORDER BY release_time DESC
+    </select>
+
+    <select id="findAllOrderByReleaseTimeDesc" resultMap="NoticeResultMap">
+        SELECT * FROM notice ORDER BY release_time DESC
+    </select>
+
+    <insert id="insert" parameterType="com.example.springboot.entity.Notice" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notice (title, content, author, release_time)
+        VALUES (#{title}, #{content}, #{author}, #{releaseTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.springboot.entity.Notice">
+        UPDATE notice
+        <set>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="author != null and author != ''">author = #{author},</if>
+            <if test="releaseTime != null">release_time = #{releaseTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM notice WHERE id = #{id}
+    </delete>
+
+</mapper> 

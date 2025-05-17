@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.DormManagerMapper">
+
+    <resultMap id="DormManagerResultMap" type="com.example.springboot.entity.DormManager">
+        <id property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="dormBuildId" column="dormbuild_id"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="phoneNum" column="phone_num"/>
+        <result property="email" column="email"/>
+        <result property="avatar" column="avatar"/>
+    </resultMap>
+
+    <select id="findByUsername" resultMap="DormManagerResultMap">
+        SELECT * FROM dorm_manager WHERE username = #{username}
+    </select>
+
+    <select id="findAll" resultMap="DormManagerResultMap">
+        SELECT * FROM dorm_manager
+    </select>
+
+    <select id="findByCriteria" resultMap="DormManagerResultMap">
+        SELECT * FROM dorm_manager
+        <where>
+            <if test="search != null and search != ''">
+                username LIKE CONCAT('%', #{search}, '%') OR name LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </where>
+    </select>
+    
+    <select id="findByUsernameAndPassword" resultMap="DormManagerResultMap">
+        SELECT * FROM dorm_manager WHERE username = #{username} AND password = #{password}
+    </select>
+
+    <insert id="insert" parameterType="com.example.springboot.entity.DormManager">
+        INSERT INTO dorm_manager (username, password, dormbuild_id, name, gender, age, phone_num, email, avatar)
+        VALUES (#{username}, #{password}, #{dormBuildId}, #{name}, #{gender}, #{age}, #{phoneNum}, #{email}, #{avatar})
+    </insert>
+
+    <update id="update" parameterType="com.example.springboot.entity.DormManager">
+        UPDATE dorm_manager
+        <set>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="dormBuildId != null">dormbuild_id = #{dormBuildId},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="phoneNum != null and phoneNum != ''">phone_num = #{phoneNum},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+        </set>
+        WHERE username = #{username}
+    </update>
+
+    <delete id="deleteByUsername">
+        DELETE FROM dorm_manager WHERE username = #{username}
+    </delete>
+
+</mapper> 

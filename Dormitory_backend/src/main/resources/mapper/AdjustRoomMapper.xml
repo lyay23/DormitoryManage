@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.AdjustRoomMapper">
+
+    <resultMap id="AdjustRoomResultMap" type="com.example.springboot.entity.AdjustRoom">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="name" column="name"/>
+        <result property="currentRoomId" column="currentroom_id"/>
+        <result property="currentBedId" column="currentbed_id"/>
+        <result property="towardsRoomId" column="towardsroom_id"/>
+        <result property="towardsBedId" column="towardsbed_id"/>
+        <result property="state" column="state"/>
+        <result property="applyTime" column="apply_time"/>
+        <result property="finishTime" column="finish_time"/>
+    </resultMap>
+
+    <select id="findById" resultMap="AdjustRoomResultMap">
+        SELECT * FROM adjust_room WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="AdjustRoomResultMap">
+        SELECT * FROM adjust_room ORDER BY apply_time DESC
+    </select>
+
+    <select id="findByUsername" resultMap="AdjustRoomResultMap">
+        SELECT * FROM adjust_room WHERE username = #{username} ORDER BY apply_time DESC
+    </select>
+
+    <select id="findByState" resultMap="AdjustRoomResultMap">
+        SELECT * FROM adjust_room WHERE state = #{state} ORDER BY apply_time DESC
+    </select>
+
+    <select id="findByUsernameAndCriteria" resultType="com.example.springboot.entity.AdjustRoom">
+        SELECT * FROM adjust_room
+        WHERE username = #{username}
+        <if test="search != null and search != ''">
+            AND (
+                state LIKE CONCAT('%', #{search}, '%')
+                OR name LIKE CONCAT('%', #{search}, '%')
+                OR current_room_id LIKE CONCAT('%', #{search}, '%')
+                OR towards_room_id LIKE CONCAT('%', #{search}, '%')
+            )
+        </if>
+        ORDER BY id DESC
+    </select>
+
+
+    <insert id="insert" parameterType="com.example.springboot.entity.AdjustRoom" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO adjust_room (username, name, currentroom_id, currentbed_id, towardsroom_id, towardsbed_id, state, apply_time, finish_time)
+        VALUES (#{username}, #{name}, #{currentRoomId}, #{currentBedId}, #{towardsRoomId}, #{towardsBedId}, #{state}, #{applyTime}, #{finishTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.springboot.entity.AdjustRoom">
+        UPDATE adjust_room
+        SET
+            username = #{username},
+            name = #{name},
+            currentroom_id = #{currentRoomId},
+            currentbed_id = #{currentBedId},
+            towardsroom_id = #{towardsRoomId},
+            towardsbed_id = #{towardsBedId},
+            state = #{state},
+            apply_time = #{applyTime},
+            finish_time = #{finishTime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM adjust_room WHERE id = #{id}
+    </delete>
+
+    <select id="findByCriteria" resultType="com.example.springboot.entity.AdjustRoom">
+        SELECT * FROM adjust_room
+    </select>
+
+
+</mapper> 

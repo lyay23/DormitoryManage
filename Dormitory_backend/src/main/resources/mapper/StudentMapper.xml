@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.StudentMapper">
+
+    <resultMap id="StudentResultMap" type="com.example.springboot.entity.Student">
+        <id property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="gender" column="gender"/>
+        <result property="phoneNum" column="phone_num"/>
+        <result property="email" column="email"/>
+        <result property="avatar" column="avatar"/>
+    </resultMap>
+
+    <select id="findByUsername" resultMap="StudentResultMap">
+        SELECT * FROM student WHERE username = #{username}
+    </select>
+
+    <select id="findByUsernameAndPassword" resultMap="StudentResultMap">
+        SELECT * FROM student WHERE username = #{username} AND password = #{password}
+    </select>
+
+    <select id="findAll" resultMap="StudentResultMap">
+        SELECT * FROM student
+    </select>
+
+    <select id="findByCriteria" resultMap="StudentResultMap">
+        SELECT * FROM student
+        <where>
+            <if test="search != null and search != ''">
+                username LIKE CONCAT('%', #{search}, '%') OR name LIKE CONCAT('%', #{search}, '%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.example.springboot.entity.Student">
+        INSERT INTO student (username, password, name, age, gender, phone_num, email, avatar)
+        VALUES (#{username}, #{password}, #{name}, #{age}, #{gender}, #{phoneNum}, #{email}, #{avatar})
+    </insert>
+
+    <update id="update" parameterType="com.example.springboot.entity.Student">
+        UPDATE student
+        <set>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="phoneNum != null and phoneNum != ''">phone_num = #{phoneNum},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+        </set>
+        WHERE username = #{username}
+    </update>
+
+    <delete id="deleteByUsername">
+        DELETE FROM student WHERE username = #{username}
+    </delete>
+
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM student
+    </select>
+
+</mapper> 

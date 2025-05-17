@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.DormRoomMapper">
+
+    <resultMap id="DormRoomResultMap" type="com.example.springboot.entity.DormRoom">
+        <id property="dormRoomId" column="dormroom_id"/>
+        <result property="dormBuildId" column="dormbuild_id"/>
+        <result property="floorNum" column="floor_num"/>
+        <result property="maxCapacity" column="max_capacity"/>
+        <result property="currentCapacity" column="current_capacity"/>
+        <result property="firstBed" column="first_bed"/>
+        <result property="secondBed" column="second_bed"/>
+        <result property="thirdBed" column="third_bed"/>
+        <result property="fourthBed" column="fourth_bed"/>
+    </resultMap>
+
+    <select id="findByRoomId" resultMap="DormRoomResultMap">
+        SELECT * FROM dorm_room WHERE dormroom_id = #{dormRoomId}
+    </select>
+
+    <select id="findAll" resultMap="DormRoomResultMap">
+        SELECT * FROM dorm_room
+    </select>
+
+    <select id="findByCriteria" resultMap="DormRoomResultMap">
+        SELECT * FROM dorm_room
+        <where>
+            <if test="search != null and search != ''">
+                (CAST(dormroom_id AS CHAR) LIKE CONCAT('%', #{search}, '%')) 
+                OR (CAST(dormbuild_id AS CHAR) LIKE CONCAT('%', #{search}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.example.springboot.entity.DormRoom">
+        INSERT INTO dorm_room (dormroom_id, dormbuild_id, floor_num, max_capacity, current_capacity, first_bed, second_bed, third_bed, fourth_bed)
+        VALUES (#{dormRoomId}, #{dormBuildId}, #{floorNum}, #{maxCapacity}, #{currentCapacity}, #{firstBed}, #{secondBed}, #{thirdBed}, #{fourthBed})
+    </insert>
+
+    <update id="update" parameterType="com.example.springboot.entity.DormRoom">
+        UPDATE dorm_room
+        <set>
+            <if test="dormBuildId != null">dormbuild_id = #{dormBuildId},</if>
+            <if test="floorNum != null">floor_num = #{floorNum},</if>
+            <if test="maxCapacity != null">max_capacity = #{maxCapacity},</if>
+            <if test="currentCapacity != null">current_capacity = #{currentCapacity},</if>
+            <if test="firstBed != null">first_bed = #{firstBed},</if>
+            <if test="secondBed != null">second_bed = #{secondBed},</if>
+            <if test="thirdBed != null">third_bed = #{thirdBed},</if>
+            <if test="fourthBed != null">fourth_bed = #{fourthBed},</if>
+        </set>
+        WHERE dormroom_id = #{dormRoomId}
+    </update>
+
+    <delete id="deleteByRoomId">
+        DELETE FROM dorm_room WHERE dormroom_id = #{dormRoomId}
+    </delete>
+
+    <select id="findByOccupant" resultMap="DormRoomResultMap">
+        SELECT * FROM dorm_room
+        WHERE first_bed = #{studentName} OR second_bed = #{studentName} OR third_bed = #{studentName} OR fourth_bed = #{studentName}
+        LIMIT 1
+    </select>
+
+    <select id="countNonFullRooms" resultType="int">
+        SELECT COUNT(*) FROM dorm_room WHERE current_capacity &lt; max_capacity
+    </select>
+    
+    <update id="clearBedAndUpdateCapacity">
+        UPDATE dorm_room 
+        SET ${bedNameColumn} = NULL, current_capacity = current_capacity - 1 
+        WHERE dormroom_id = #{dormRoomId} AND ${bedNameColumn} IS NOT NULL AND current_capacity > 0
+    </update>
+    
+    <select id="sumCurrentCapacity" resultType="long">
+        SELECT SUM(current_capacity) FROM dorm_room
+    </select>
+    
+    <select id="sumCurrentCapacityByBuilding" resultType="long">
+        SELECT SUM(current_capacity) FROM dorm_room WHERE dormbuild_id = #{dormBuildId}
+    </select>
+
+</mapper> 

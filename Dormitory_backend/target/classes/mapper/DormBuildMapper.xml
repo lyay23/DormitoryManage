@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.DormBuildMapper">
+
+    <resultMap id="DormBuildResultMap" type="com.example.springboot.entity.DormBuild">
+        <id property="id" column="id" />
+        <result property="dormBuildId" column="dormbuild_id" />
+        <result property="dormBuildName" column="dormbuild_name" />
+        <result property="dormBuildDetail" column="dormbuild_detail" />
+    </resultMap>
+
+    <select id="findById" resultMap="DormBuildResultMap">
+        SELECT id, dormbuild_id, dormbuild_name, dormbuild_detail FROM dorm_build WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="DormBuildResultMap">
+        SELECT id, dormbuild_id, dormbuild_name, dormbuild_detail FROM dorm_build
+    </select>
+
+    <insert id="insert" parameterType="com.example.springboot.entity.DormBuild" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO dorm_build (dormbuild_id, dormbuild_name, dormbuild_detail)
+        VALUES (#{dormBuildId}, #{dormBuildName}, #{dormBuildDetail})
+    </insert>
+
+    <update id="update" parameterType="com.example.springboot.entity.DormBuild">
+        UPDATE dorm_build
+        <set>
+            <if test="dormBuildId != null">
+                dormbuild_id = #{dormBuildId},
+            </if>
+            <if test="dormBuildName != null and dormBuildName != ''">
+                dormbuild_name = #{dormBuildName},
+            </if>
+            <if test="dormBuildDetail != null">
+                dormbuild_detail = #{dormBuildDetail},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM dorm_build WHERE id = #{id}
+    </delete>
+
+    <select id="findByName" resultMap="DormBuildResultMap">
+        SELECT id, dormbuild_id, dormbuild_name, dormbuild_detail 
+        FROM dorm_build 
+        WHERE dormbuild_name LIKE CONCAT('%', #{name}, '%')
+    </select>
+
+</mapper> 
